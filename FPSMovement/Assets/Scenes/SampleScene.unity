@@ -138,7 +138,7 @@ GameObject:
   - component: {fileID: 177653152}
   - component: {fileID: 177653153}
   m_Layer: 0
-  m_Name: Capsule
+  m_Name: Player
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -241,6 +241,10 @@ MonoBehaviour:
   jumpingForce: 140
   gravityForce: 5
   canMove: 1
+  groundDrag: 20000
+  ground:
+    serializedVersion: 2
+    m_Bits: 8
 --- !u!54 &177653153
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -560,7 +564,7 @@ GameObject:
   - component: {fileID: 1042300902}
   - component: {fileID: 1042300901}
   - component: {fileID: 1042300900}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Plane
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -640,7 +644,7 @@ Transform:
   m_GameObject: {fileID: 1042300899}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 10, y: 10, z: 10}
+  m_LocalScale: {x: 10, y: 10, z: 10.03}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
