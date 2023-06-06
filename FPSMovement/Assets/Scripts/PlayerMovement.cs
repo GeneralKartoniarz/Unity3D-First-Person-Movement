@@ -7,14 +7,21 @@ public class PlayerMovement : MonoBehaviour
     [Header("Key bindings")]
     public static KeyCode jumpKey = KeyCode.Space;
     public static KeyCode crouchKey = KeyCode.LeftShift;
+    public static KeyCode runningKey = KeyCode.LeftControl;
+
     [Header("Moving")]
+    [SerializeField] float moveSpeed;
     [SerializeField] float walkingSpeed;
     [SerializeField] float runningSpeed;
+    [SerializeField] float crouchSpeed;
+    [Header("Crouching")]
+    [SerializeField] float crouchHeight;
     [Header("Jumping")]
     [SerializeField] float jumpingForce;
     [SerializeField] float jumpingCooldown;
     [SerializeField] float airMultiplier;
     [SerializeField] bool canJump;
+
     [Header("Physics")]
     [SerializeField] float gravityForce;
     [SerializeField] bool canMove;
@@ -23,23 +30,32 @@ public class PlayerMovement : MonoBehaviour
 
     private float xInput;
     private float yInput;
-    private bool isRunning;
     private bool isGrounded;
     private float playerHeight;
 
+    private CapsuleCollider playerCollider;
     private Rigidbody playerRb;
     private Vector3 moveDirection;
     private Transform player;
+    private PlayerState state;
 
+    public enum PlayerState
+    {
+        walking,
+        crouching,
+        running,
+        air
+    }
 
     
     void Start()
     {
         //assigning variables
         canJump = true;
-        playerHeight = 2f;
         player = GetComponent<Transform>().transform;
         playerRb = GetComponent<Rigidbody>();
+        playerCollider = GetComponent<CapsuleCollider>();
+        playerHeight = playerCollider.height;
         playerRb.freezeRotation = true;
     }
     void Update()
@@ -54,6 +70,16 @@ public class PlayerMovement : MonoBehaviour
             Jump();
             Invoke("CanJumpReset", jumpingCooldown);
         }
+        if (state == PlayerState.crouching)
+        {
+            playerCollider.height *= crouchHeight;
+
+        }
+        else 
+        {
+            playerCollider.height = playerHeight;
+
+        } 
         //checking if is grounded
         isGrounded = Physics.Raycast(transform.position, Vector3.down, playerHeight * 0.5f + 0.1f, ground);
         //adding drag (removing sliding)
@@ -61,30 +87,53 @@ public class PlayerMovement : MonoBehaviour
         else playerRb.drag = 0;
         //removing acceleration (speed control)
         Vector3 actualVelocity = new Vector3(playerRb.velocity.x, 0f, playerRb.velocity.z);
-        if(actualVelocity.magnitude > walkingSpeed)
+        if(actualVelocity.magnitude > moveSpeed)
         {
-            Vector3 limitedVelocity = actualVelocity.normalized * walkingSpeed;
+            Vector3 limitedVelocity = actualVelocity.normalized * moveSpeed;
             playerRb.velocity = new Vector3(limitedVelocity.x, playerRb.velocity.y, limitedVelocity.z);
         }
         MovePlayer();
+        StateHandler();
     }
     //getting direction and adding force
     private void MovePlayer()
     {
         moveDirection = player.forward * yInput + player.right * xInput;
-        if(isGrounded)
-            playerRb.AddForce(moveDirection.normalized * walkingSpeed, ForceMode.Force);
-        else
-            playerRb.AddForce(moveDirection.normalized * walkingSpeed * airMultiplier, ForceMode.Force);
+        playerRb.AddForce(isGrounded ? moveDirection.normalized * walkingSpeed : moveDirection.normalized * walkingSpeed * airMultiplier, ForceMode.Force);
 
     }
+    //jumping
     private void Jump()
     {
         playerRb.velocity = new Vector3(playerRb.velocity.x, 0f, playerRb.velocity.z);
         playerRb.AddForce(transform.up * jumpingForce, ForceMode.Impulse);
     }
+    //jumping reset
     private void CanJumpReset()
     {
         canJump = true;
+    }
+    //checking state
+    private void StateHandler()
+    {
+        if(isGrounded && Input.GetKey(runningKey) && !Input.GetKey(crouchKey))
+        {
+            state = PlayerState.running;
+            moveSpeed = runningSpeed;
+        }
+        else if(isGrounded && Input.GetKey(crouchKey) && !Input.GetKey(runningKey))
+        {
+            state = PlayerState.crouching;
+            moveSpeed = crouchSpeed;
+        }
+        else if (isGrounded)
+        {
+            state = PlayerState.walking;
+            moveSpeed = walkingSpeed;
+        }
+        else
+        {
+            state = PlayerState.air;
+        }
     }
 }
