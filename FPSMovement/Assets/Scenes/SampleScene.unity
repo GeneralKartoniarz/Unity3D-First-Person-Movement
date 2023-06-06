@@ -241,7 +241,7 @@ MonoBehaviour:
   jumpingForce: 140
   gravityForce: 5
   canMove: 1
-  groundDrag: 20000
+  groundDrag: 2
   ground:
     serializedVersion: 2
     m_Bits: 8
