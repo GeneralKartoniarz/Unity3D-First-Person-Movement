@@ -238,7 +238,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   walkingSpeed: 10
   runningSpeed: 20
-  jumpingForce: 140
+  jumpingForce: 5
+  jumpingCooldown: 0.5
+  airMultiplier: 0.2
+  canJump: 0
   gravityForce: 5
   canMove: 1
   groundDrag: 2

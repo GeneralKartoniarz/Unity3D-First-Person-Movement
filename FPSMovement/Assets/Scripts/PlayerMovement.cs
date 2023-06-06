@@ -72,7 +72,11 @@ public class PlayerMovement : MonoBehaviour
     private void MovePlayer()
     {
         moveDirection = player.forward * yInput + player.right * xInput;
-        playerRb.AddForce(moveDirection.normalized * walkingSpeed, ForceMode.Force);
+        if(isGrounded)
+            playerRb.AddForce(moveDirection.normalized * walkingSpeed, ForceMode.Force);
+        else
+            playerRb.AddForce(moveDirection.normalized * walkingSpeed * airMultiplier, ForceMode.Force);
+
     }
     private void Jump()
     {
