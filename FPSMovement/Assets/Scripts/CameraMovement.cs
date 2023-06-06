@@ -4,12 +4,14 @@ using UnityEngine;
 
 public class CameraMovement : MonoBehaviour
 {
+    //assign that to camera object
     [SerializeField] Camera mainCamera;
     [SerializeField] float mouseSens = 20f;
     [SerializeField] float angleYmax = 20f;
     private float yRot;
     void Start()
     {
+        //locking cursor
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
     }
