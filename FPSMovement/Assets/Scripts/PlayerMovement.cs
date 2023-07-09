@@ -73,11 +73,13 @@ public class PlayerMovement : MonoBehaviour
         if (state == PlayerState.crouching)
         {
             playerCollider.height *= crouchHeight;
+            playerCollider.center = new Vector3(0, -1 *(playerCollider.transform.position.y * .5f), 0);
 
         }
         else 
         {
             playerCollider.height = playerHeight;
+            playerCollider.center = new Vector3(0, 0, 0);
 
         } 
         //checking if is grounded
