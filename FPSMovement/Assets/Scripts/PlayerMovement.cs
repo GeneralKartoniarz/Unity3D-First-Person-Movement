@@ -21,12 +21,14 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] float jumpingCooldown;
     [SerializeField] float airMultiplier;
     [SerializeField] bool canJump;
-
     [Header("Physics")]
     [SerializeField] float gravityForce;
     [SerializeField] bool canMove;
     [SerializeField] float groundDrag;
     [SerializeField] LayerMask ground;
+    [Header("Camera")]
+    [SerializeField] Camera mainCamera;
+    [SerializeField] float cameraHeightPos;
 
     private float xInput;
     private float yInput;
@@ -57,6 +59,7 @@ public class PlayerMovement : MonoBehaviour
         playerCollider = GetComponent<CapsuleCollider>();
         playerHeight = playerCollider.height;
         playerRb.freezeRotation = true;
+        Debug.Log(playerHeight);
     }
     void Update()
     {
@@ -70,16 +73,17 @@ public class PlayerMovement : MonoBehaviour
             Jump();
             Invoke("CanJumpReset", jumpingCooldown);
         }
-        if (state == PlayerState.crouching)
+        if (Input.GetKey(crouchKey))
         {
             playerCollider.height *= crouchHeight;
-            playerCollider.center = new Vector3(0, -1 *(playerCollider.transform.position.y * .5f), 0);
-
+            playerCollider.center = new Vector3(0, -1 *(player.position.y * .5f), 0);
+            mainCamera.transform.position = new Vector3(player.transform.position.x, (player.transform.position.y + cameraHeightPos) * crouchHeight, player.transform.position.z);
         }
         else 
         {
             playerCollider.height = playerHeight;
             playerCollider.center = new Vector3(0, 0, 0);
+            mainCamera.transform.position = new Vector3(player.transform.position.x, player.transform.position.y + cameraHeightPos, player.transform.position.z);
 
         } 
         //checking if is grounded
