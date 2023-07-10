@@ -16,6 +16,7 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] float crouchSpeed;
     [Header("Crouching")]
     [SerializeField] float crouchHeight;
+    [SerializeField] bool canStandUp;
     [Header("Jumping")]
     [SerializeField] float jumpingForce;
     [SerializeField] float jumpingCooldown;
@@ -59,7 +60,6 @@ public class PlayerMovement : MonoBehaviour
         playerCollider = GetComponent<CapsuleCollider>();
         playerHeight = playerCollider.height;
         playerRb.freezeRotation = true;
-        Debug.Log(playerHeight);
     }
     void Update()
     {
@@ -73,21 +73,25 @@ public class PlayerMovement : MonoBehaviour
             Jump();
             Invoke("CanJumpReset", jumpingCooldown);
         }
-        if (Input.GetKey(crouchKey))
+        canStandUp = Physics.Raycast(transform.position, Vector3.up, playerHeight * 0.5f);
+        if (Input.GetKey(crouchKey) && !Input.GetKey(runningKey))
         {
             playerCollider.height *= crouchHeight;
-            playerCollider.center = new Vector3(0, -1 *(player.position.y * .5f), 0);
+            playerCollider.center = new Vector3(0, -1 * (player.position.y * .5f), 0);
             mainCamera.transform.position = new Vector3(player.transform.position.x, (player.transform.position.y + cameraHeightPos) * crouchHeight, player.transform.position.z);
+            canStandUp = true;
         }
         else 
         {
-            playerCollider.height = playerHeight;
-            playerCollider.center = new Vector3(0, 0, 0);
-            mainCamera.transform.position = new Vector3(player.transform.position.x, player.transform.position.y + cameraHeightPos, player.transform.position.z);
-
+            if (!canStandUp)
+            {
+                playerCollider.height = playerHeight;
+                playerCollider.center = new Vector3(0, 0, 0);
+                mainCamera.transform.position = new Vector3(player.transform.position.x, player.transform.position.y + cameraHeightPos, player.transform.position.z);
+            }
         } 
         //checking if is grounded
-        isGrounded = Physics.Raycast(transform.position, Vector3.down, playerHeight * 0.5f + 0.1f, ground);
+        isGrounded = Physics.Raycast(transform.position, Vector3.down, playerHeight * 0.5f + 0.1f, ground); 
         //adding drag (removing sliding)
         if (isGrounded) playerRb.drag = groundDrag;
         else playerRb.drag = 0;
@@ -122,15 +126,16 @@ public class PlayerMovement : MonoBehaviour
     //checking state
     private void StateHandler()
     {
-        if(isGrounded && Input.GetKey(runningKey) && !Input.GetKey(crouchKey))
-        {
-            state = PlayerState.running;
-            moveSpeed = runningSpeed;
-        }
-        else if(isGrounded && Input.GetKey(crouchKey) && !Input.GetKey(runningKey))
+
+        if(isGrounded && Input.GetKey(crouchKey) && !Input.GetKey(runningKey))
         {
             state = PlayerState.crouching;
             moveSpeed = crouchSpeed;
+        }
+        else if (isGrounded && Input.GetKey(runningKey) && !Input.GetKey(crouchKey))
+        {
+            state = PlayerState.running;
+            moveSpeed = runningSpeed;
         }
         else if (isGrounded)
         {
