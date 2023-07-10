@@ -9,12 +9,6 @@ public class HoldingItems : MonoBehaviour
     [SerializeField] Camera mainCamera;
     [SerializeField] Transform placeOfholding;
     [SerializeField] float rangeOfHand;
-    void Start()
-    {
-
-
-    }
-
     void Update()
     {
         if (Input.GetMouseButtonDown(0) && !isHeld)
@@ -33,8 +27,13 @@ public class HoldingItems : MonoBehaviour
     private void FixedUpdate()
     {
         if (isHeld)
+        {
             heldObject.transform.position = placeOfholding.position;
+        }
         else
+        {
             heldObject = null;
+        }
+
     }
 }

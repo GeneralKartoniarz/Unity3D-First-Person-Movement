@@ -17,6 +17,7 @@ public class PlayerMovement : MonoBehaviour
     [Header("Crouching")]
     [SerializeField] float crouchHeight;
     [SerializeField] bool canStandUp;
+    [SerializeField] Transform crouchCameraPos;
     [Header("Jumping")]
     [SerializeField] float jumpingForce;
     [SerializeField] float jumpingCooldown;
@@ -77,10 +78,10 @@ public class PlayerMovement : MonoBehaviour
         canStandUp = Physics.Raycast(transform.position, Vector3.up, playerHeight * 0.5f);
         if (Input.GetKey(crouchKey) && !Input.GetKey(runningKey))
         {
-            playerCollider.height *= crouchHeight;
-            playerCollider.center = new Vector3(0, -1 * (player.position.y * .5f), 0);
-            mainCamera.transform.position = new Vector3(player.transform.position.x, (player.transform.position.y + cameraHeightPos) * crouchHeight, player.transform.position.z);
-            canStandUp = true;
+                playerCollider.height *= crouchHeight;
+                playerCollider.center = new Vector3(0, -0.5f, 0);
+                mainCamera.transform.position = crouchCameraPos.transform.position;
+                canStandUp = true;
         }
         else 
         {
@@ -122,7 +123,10 @@ public class PlayerMovement : MonoBehaviour
     private void Jump()
     {
         playerRb.velocity = new Vector3(playerRb.velocity.x, 0f, playerRb.velocity.z);
-        playerRb.AddForce(transform.up * jumpingForce, ForceMode.Impulse);
+        if(state == PlayerState.crouching)
+            playerRb.AddForce(transform.up * jumpingForce * 0.8f, ForceMode.Impulse);
+        else
+            playerRb.AddForce(transform.up * jumpingForce, ForceMode.Impulse);
     }
     //jumping reset
     private void CanJumpReset()
@@ -151,6 +155,7 @@ public class PlayerMovement : MonoBehaviour
         else
         {
             state = PlayerState.air;
+            moveSpeed = runningSpeed * airMultiplier;
         }
     }
 }
