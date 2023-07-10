@@ -63,6 +63,7 @@ public class PlayerMovement : MonoBehaviour
     }
     void Update()
     {
+        Debug.Log(isGrounded);
         //getting inputs
         xInput = Input.GetAxisRaw("Horizontal");
         yInput = Input.GetAxisRaw("Vertical");
@@ -91,7 +92,12 @@ public class PlayerMovement : MonoBehaviour
             }
         } 
         //checking if is grounded
-        isGrounded = Physics.Raycast(transform.position, Vector3.down, playerHeight * 0.5f + 0.1f, ground); 
+        isGrounded = Physics.Raycast(transform.position, Vector3.down, playerHeight * 0.5f + 0.1f);
+        if(Physics.Raycast(transform.position, transform.TransformDirection(Vector3.down) * (playerHeight * 0.5f + 0.1f), out RaycastHit hit))
+        {
+            if (hit.collider.gameObject == HoldingItems.heldObject)
+                isGrounded = false;
+        }
         //adding drag (removing sliding)
         if (isGrounded) playerRb.drag = groundDrag;
         else playerRb.drag = 0;

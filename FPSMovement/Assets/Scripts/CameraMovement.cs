@@ -7,7 +7,7 @@ public class CameraMovement : MonoBehaviour
     //assign that to camera object
     [SerializeField] Camera mainCamera;
     [SerializeField] float mouseSens = 20f;
-    [SerializeField] float angleYmax = 20f;
+    [SerializeField] float angleYmax = 30f;
     private float yRot;
     void Start()
     {
