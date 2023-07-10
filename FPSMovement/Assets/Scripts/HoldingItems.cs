@@ -14,7 +14,7 @@ public class HoldingItems : MonoBehaviour
     {
         if (Input.GetMouseButtonDown(0) && !isHeld)
         {
-            if (Physics.Raycast(mainCamera.transform.position, mainCamera.transform.TransformDirection(Vector3.forward) * rangeOfHand, out RaycastHit hit) && hit.collider.gameObject.layer == LayerMask.NameToLayer("grabbable"))
+            if (Physics.Raycast(mainCamera.transform.position, mainCamera.transform.TransformDirection(Vector3.forward) * rangeOfHand, out RaycastHit hit) && hit.collider.gameObject.layer == LayerMask.NameToLayer("grabbable") && hit.collider.gameObject.GetComponent<Rigidbody>() != null)
             {
                 heldObject = hit.collider.gameObject;
                 isHeld = true;
@@ -24,7 +24,7 @@ public class HoldingItems : MonoBehaviour
         {
             isHeld = false;
             Rigidbody heldObjectRb = heldObject.GetComponent<Rigidbody>();
-            heldObjectRb.AddForce(mainCamera.transform.forward * throwForce /** (1 / heldObjectRb.mass)*/, ForceMode.Impulse);
+            heldObjectRb.AddForce(mainCamera.transform.forward * throwForce, ForceMode.Impulse);
         }
         else if (Input.GetMouseButtonDown(0) && isHeld)
             isHeld = false;
