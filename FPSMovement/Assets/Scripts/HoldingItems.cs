@@ -9,6 +9,7 @@ public class HoldingItems : MonoBehaviour
     [SerializeField] Camera mainCamera;
     [SerializeField] Transform placeOfholding;
     [SerializeField] float rangeOfHand;
+    [SerializeField] float throwForce;
     void Update()
     {
         if (Input.GetMouseButtonDown(0) && !isHeld)
@@ -19,19 +20,28 @@ public class HoldingItems : MonoBehaviour
                 isHeld = true;
             }
         }
-        else if (Input.GetMouseButtonDown(0) && isHeld)
+        else if (Input.GetMouseButtonDown(1) && isHeld)
         {
             isHeld = false;
+            Rigidbody heldObjectRb = heldObject.GetComponent<Rigidbody>();
+            heldObjectRb.AddForce(mainCamera.transform.forward * throwForce /** (1 / heldObjectRb.mass)*/, ForceMode.Impulse);
         }
+        else if (Input.GetMouseButtonDown(0) && isHeld)
+            isHeld = false;
+
     }
     private void FixedUpdate()
     {
         if (isHeld)
         {
-            heldObject.transform.position = placeOfholding.position;
+            heldObject.transform.position = Vector3.Lerp(heldObject.transform.position, placeOfholding.position, 0.2f);
+            heldObject.GetComponent<Rigidbody>().useGravity = false;
+            heldObject.GetComponent<Collider>().enabled = false;
         }
-        else
+        else if (heldObject != null)
         {
+            heldObject.GetComponent<Rigidbody>().useGravity = true;
+            heldObject.GetComponent<Collider>().enabled = true;
             heldObject = null;
         }
 
