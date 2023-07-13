@@ -359,7 +359,7 @@ MonoBehaviour:
   crouchHeight: 0.5
   canStandUp: 0
   crouchCameraPos: {fileID: 1444317229}
-  jumpingForce: 7
+  jumpingForce: 6
   jumpingCooldown: 0.5
   airMultiplier: 0.2
   canJump: 0
@@ -792,7 +792,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   mainCamera: {fileID: 963194227}
   mouseSens: 10
-  angleYmax: 45
+  angleYmax: 60
 --- !u!1 &1042300899
 GameObject:
   m_ObjectHideFlags: 0
