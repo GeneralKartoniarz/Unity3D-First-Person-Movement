@@ -17,6 +17,9 @@ public class HoldingItems : MonoBehaviour
             if (Physics.Raycast(mainCamera.transform.position, mainCamera.transform.TransformDirection(Vector3.forward) * rangeOfHand, out RaycastHit hit) && hit.collider.gameObject.layer == LayerMask.NameToLayer("grabbable") && hit.collider.gameObject.GetComponent<Rigidbody>() != null)
             {
                 heldObject = hit.collider.gameObject;
+                Rigidbody heldObjectRb = heldObject.GetComponent<Rigidbody>();
+                heldObjectRb.velocity = Vector3.zero;
+                heldObjectRb.angularVelocity = Vector3.zero;
                 isHeld = true;
             }
         }
